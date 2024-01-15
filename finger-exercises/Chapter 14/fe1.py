@@ -2,7 +2,7 @@
 minimizes the sum of the weights. Assume that all weights are
 positive integers."""
 from random import randint
-"""This is pretty gross looking code, partly because the instructor has god awful coding style,
+"""This is pretty gross looking code, partly because the instructor has god awful coding style, and
 partly because of asking me to modify an aglorithm for something it wasnt directly designed to do.
 This is just a mess, but it works!"""
 
