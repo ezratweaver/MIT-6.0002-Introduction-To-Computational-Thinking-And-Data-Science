@@ -29,8 +29,9 @@ def load_cows(filename):
     with open(filename) as file:
         for line in file:
             line = line.strip("\n").split(",")
-            cow_log[line[0]] = line[1]
+            cow_log[line[0]] = int(line[1])
     return cow_log
+
 
 # Problem 2
 def greedy_cow_transport(cows, limit=10):
@@ -55,14 +56,30 @@ def greedy_cow_transport(cows, limit=10):
     transported on a particular trip and the overall list containing all the
     trips
     """
-    # TODO: Your code here
-    pass
+    cow_list = [(c, w) for c, w in cows.items()]
+    sorted_cows = sorted(cow_list, key=lambda x: x[1], reverse=True)
+    transport_list = []
+    current_transport = []
+    current_weight = 0
+    while len(sorted_cows) != 0:
+        for cow in sorted_cows:
+            cow_weight = cow[1]
+            x = cow_weight + current_weight
+            if cow_weight + current_weight <= limit:
+                current_transport.append(cow)
+                current_weight += cow_weight
+            else:
+                continue
+        for cow in current_transport:
+            sorted_cows.remove(cow)
+        transport_list.append(current_transport)
+        current_weight = 0
+        current_transport = []
+    return transport_list
 
 
-# Problem 3
 def brute_force_cow_transport(cows, limit=10):
     """
-    Finds the allocation of cows that minimizes the number of spaceship trips
     via brute force.  The brute force algorithm should follow the following method:
 
     1. Enumerate all possible ways that the cows can be divided into separate trips 
@@ -104,4 +121,5 @@ def compare_cow_transport_algorithms():
 
 
 if __name__ == "__main__":
-    print(load_cows("ps1_cow_data.txt"))
+    cow_log = load_cows("ps1_cow_data.txt")
+    print(greedy_cow_transport(cow_log))
