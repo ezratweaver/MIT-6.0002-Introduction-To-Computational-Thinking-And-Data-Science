@@ -7,9 +7,10 @@
 from ps1_partition import get_partitions
 import time
 
-#================================
+
+# ================================
 # Part A: Transporting Space Cows
-#================================
+# ================================
 
 # Problem 1
 def load_cows(filename):
@@ -24,11 +25,15 @@ def load_cows(filename):
     Returns:
     a dictionary of cow name (string), weight (int) pairs
     """
-    # TODO: Your code here
-    pass
+    cow_log = {}
+    with open(filename) as file:
+        for line in file:
+            line = line.strip("\n").split(",")
+            cow_log[line[0]] = line[1]
+    return cow_log
 
 # Problem 2
-def greedy_cow_transport(cows,limit=10):
+def greedy_cow_transport(cows, limit=10):
     """
     Uses a greedy heuristic to determine an allocation of cows that attempts to
     minimize the number of spaceship trips needed to transport all the cows. The
@@ -53,8 +58,9 @@ def greedy_cow_transport(cows,limit=10):
     # TODO: Your code here
     pass
 
+
 # Problem 3
-def brute_force_cow_transport(cows,limit=10):
+def brute_force_cow_transport(cows, limit=10):
     """
     Finds the allocation of cows that minimizes the number of spaceship trips
     via brute force.  The brute force algorithm should follow the following method:
@@ -77,7 +83,8 @@ def brute_force_cow_transport(cows,limit=10):
     """
     # TODO: Your code here
     pass
-        
+
+
 # Problem 4
 def compare_cow_transport_algorithms():
     """
@@ -94,3 +101,7 @@ def compare_cow_transport_algorithms():
     """
     # TODO: Your code here
     pass
+
+
+if __name__ == "__main__":
+    print(load_cows("ps1_cow_data.txt"))
