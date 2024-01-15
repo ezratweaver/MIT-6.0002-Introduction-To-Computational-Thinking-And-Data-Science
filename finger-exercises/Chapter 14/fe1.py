@@ -1,4 +1,10 @@
+"""Finger exercise: Modify the DFS algorithm to find a path that
+minimizes the sum of the weights. Assume that all weights are
+positive integers."""
 from random import randint
+"""This is pretty gross looking code, partly because the instructor has god awful coding style,
+partly because of asking me to modify an aglorithm for something it wasnt directly designed to do.
+This is just a mess, but it works!"""
 
 
 class Node:
@@ -101,6 +107,8 @@ def print_path(path):
 
 
 def calc_path_distance(graph, nodelist):
+    if nodelist is None:
+        return 0
     pathdistance = 0
     for x in range(len(nodelist)):
         y = x + 1
@@ -115,9 +123,6 @@ def calc_path_distance(graph, nodelist):
 def depth_first_search(graph, start, end, path, pathdistance, shortest, to_print=False):
     path = path + [start]
     pathdistance += calc_path_distance(graph, path)
-    shortest_pathdistance = 0
-    if shortest is not None:
-        shortest_pathdistance = calc_path_distance(graph, shortest)
     if to_print:
         print("Current DFS path:", print_path(path))
     if start == end:
@@ -125,6 +130,7 @@ def depth_first_search(graph, start, end, path, pathdistance, shortest, to_print
     for node in graph.children_of(start):
         node = node[0]
         if node not in path:
+            shortest_pathdistance = calc_path_distance(graph, shortest)
             if shortest is None or pathdistance < shortest_pathdistance:
                 new_path = depth_first_search(graph, node, end, path, pathdistance, shortest, to_print)
                 if new_path is not None:
@@ -145,7 +151,7 @@ def test_shortest_path():
         g.add_node(node)
     edges = [(0, 1), (1, 2), (2, 3), (2, 4), (3, 4), (3, 5), (0, 2), (1, 0), (3, 1), (4, 0)]
     for edge in edges:
-        g.add_edge(WeightedEdge(nodes[edge[0]], nodes[edge[1]], randint(1, 3)))
+        g.add_edge(WeightedEdge(nodes[edge[0]], nodes[edge[1]], randint(1, 10)))
     sp = shortest_path(g, nodes[0], nodes[5], to_print=True)
     print("Shortest path found by DFS:", print_path(sp))
 
