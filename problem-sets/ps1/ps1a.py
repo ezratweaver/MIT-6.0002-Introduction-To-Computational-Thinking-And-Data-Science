@@ -5,7 +5,7 @@
 # Time:
 
 from ps1_partition import get_partitions
-import time
+import timeit
 
 
 # ================================
@@ -124,7 +124,7 @@ def brute_force_cow_transport(cows, limit=10):
             minimum_spot = x
     return runs[minimum_spot]
 
-# Problem 4
+
 def compare_cow_transport_algorithms():
     """
     Using the data from ps1_cow_data.txt and the specified weight limit, run your
@@ -138,10 +138,18 @@ def compare_cow_transport_algorithms():
     Returns:
     Does not return anything.
     """
-    # TODO: Your code here
-    pass
+    cow_log = load_cows("ps1_cow_data.txt")
+    start_greedy_time = timeit.default_timer()
+    greedy_results = greedy_cow_transport(cow_log)
+    greedy_time = round(timeit.default_timer() - start_greedy_time, 3)
+    start_brute_time = timeit.default_timer()
+    brute_results = brute_force_cow_transport(cow_log)
+    brute_time = round(timeit.default_timer() - start_brute_time, 3)
+    print(f"Greedy algorithm completed in {greedy_time} second(s) and "
+          f"completed the task in {len(greedy_results)} trips")
+    print(f"Brute force alogrithm completed in {brute_time} second(s) and "
+          f"completed the task in {len(brute_results)} trips")
 
 
 if __name__ == "__main__":
-    cow_log = load_cows("ps1_cow_data.txt")
-    print(brute_force_cow_transport(cow_log))
+    compare_cow_transport_algorithms()
