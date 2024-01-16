@@ -64,7 +64,7 @@ def greedy_cow_transport(cows, limit=10):
     while len(sorted_cows) != 0:
         for cow in sorted_cows:
             cow_weight = cow[1]
-            x = cow_weight + current_weight
+            if current_weight + min(sorted_cows, key=lambda x: x[1])[1] > limit: break
             if cow_weight + current_weight <= limit:
                 current_transport.append(cow)
                 current_weight += cow_weight
@@ -76,6 +76,16 @@ def greedy_cow_transport(cows, limit=10):
         current_weight = 0
         current_transport = []
     return transport_list
+
+
+def is_set_valid(run, cow_dict, limit):
+    for transport in run:
+        weight = 0
+        for cow in transport:
+            weight += cow_dict[cow]
+            if weight > limit:
+                return False
+    return True
 
 
 def brute_force_cow_transport(cows, limit=10):
@@ -98,9 +108,21 @@ def brute_force_cow_transport(cows, limit=10):
     transported on a particular trip and the overall list containing all the
     trips
     """
-    # TODO: Your code here
-    pass
-
+    cow_list = list(cows.keys())
+    minimum = None
+    runs = []
+    for x, run in enumerate(get_partitions(cow_list)):
+        runs.append(run)
+        if is_set_valid(run, cows, limit) is False:
+            continue
+        run_length = len(run)
+        if minimum is None:
+            minimum = run_length
+            minimum_spot = x
+        if run_length < minimum:
+            minimum = run_length
+            minimum_spot = x
+    return runs[minimum_spot]
 
 # Problem 4
 def compare_cow_transport_algorithms():
@@ -122,4 +144,4 @@ def compare_cow_transport_algorithms():
 
 if __name__ == "__main__":
     cow_log = load_cows("ps1_cow_data.txt")
-    print(greedy_cow_transport(cow_log))
+    print(brute_force_cow_transport(cow_log))
