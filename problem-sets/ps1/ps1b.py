@@ -25,7 +25,6 @@ def dp_make_weight(egg_weight_list, target_weight):
     for i in range(1, target_weight + 1):
         for j in range(0, len(egg_weight_list)):
             if egg_weight_list[j] <= i:
-                x = egg_arr[i - egg_weight_list[j]] + 1
                 egg_arr[i] = min(egg_arr[i], egg_arr[i - egg_weight_list[j]] + 1)
     return -1 if egg_arr[target_weight] > target_weight else egg_arr[target_weight]
 
