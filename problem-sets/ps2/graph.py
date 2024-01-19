@@ -6,12 +6,14 @@
 
 import unittest
 
+
 #
 # A set of data structures to represent graphs
 #
 
 class Node(object):
     """Represents a node in the graph"""
+
     def __init__(self, name):
         self.name = str(name)
 
@@ -39,6 +41,7 @@ class Node(object):
 class Edge(object):
     """Represents an edge in the dictionary. Includes a source and
     a destination."""
+
     def __init__(self, src, dest):
         self.src = src
         self.dest = dest
@@ -55,20 +58,23 @@ class Edge(object):
 
 class WeightedEdge(Edge):
     def __init__(self, src, dest, total_distance, outdoor_distance):
-        pass  # TODO
+        super().__init__(src, dest)
+        self.total_distance = total_distance
+        self.outdoor_distance = outdoor_distance
 
     def get_total_distance(self):
-        pass  # TODO
+        return self.total_distance
 
     def get_outdoor_distance(self):
-        pass  # TODO
+        return self.outdoor_distance
 
     def __str__(self):
-        pass  # TODO
+        return f"{self.src.get_name()}->{self.dest.get_name()} ({self.total_distance}, {self.outdoor_distance})"
 
 
 class Digraph(object):
     """Represents a directed graph of Node and Edge objects"""
+
     def __init__(self):
         self.nodes = set([])
         self.edges = {}  # must be a dict of Node -> list of edges
