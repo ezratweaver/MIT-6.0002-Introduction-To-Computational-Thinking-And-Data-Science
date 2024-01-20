@@ -107,11 +107,7 @@ class Digraph(object):
         in the  graph."""
         if edge.get_source() not in self.nodes or edge.get_destination() not in self.nodes:
             raise ValueError("One or both nodes in edge are not present in digraph.")
-        self.edges[edge.get_source()].append(
-            (edge.get_destination(),
-             edge.get_total_distance(),
-             edge.get_outdoor_distance())
-            )
+        self.edges[edge.get_source()].append(edge)
 
 
 # ================================================================
