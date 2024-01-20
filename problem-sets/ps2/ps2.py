@@ -21,7 +21,10 @@ from graph import Digraph, Node, WeightedEdge
 # represented?
 #
 # Answer:
-#
+"""The graph's nodes represent buildings. The graph's edges represent the distances between said 
+buildings, and the distance traveled outside of those buildings. The distances are represented 
+in the graph.edges dictionary and each edge in the dictionary has the distance and outside distance
+values stored."""
 
 
 # Problem 2b: Implementing load_map
