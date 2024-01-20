@@ -93,13 +93,14 @@ class Digraph(object):
     def has_node(self, node):
         return node in self.nodes
 
-    def add_node(self, node):
+    def add_node(self, *nodes):
         """Adds a Node object to the Digraph. Raises a ValueError if it is
         already in the graph."""
-        if node in self.nodes:
-            raise ValueError("Node already present in digraph")
-        self.nodes.add(node)
-        self.edges[node] = []
+        for node in nodes:
+            if node in self.nodes:
+                raise ValueError("Node already present in digraph")
+            self.nodes.add(node)
+            self.edges[node] = []
 
     def add_edge(self, edge):
         """Adds an Edge or WeightedEdge instance to the Digraph. Raises a
