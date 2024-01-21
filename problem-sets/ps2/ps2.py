@@ -48,6 +48,20 @@ def load_map(map_filename):
     return generated_map
 
 
+def node_list_to_string(diagraph, path):
+    new_list = []
+    for node in path:
+        new_list.append(node.get_name())
+    return new_list
+
+
+def string_list_to_nodes(digraph, path):
+    new_list = []
+    for node in path:
+        new_list.append(digraph.get_node(node))
+    return new_list
+
+
 def get_path_weight(digraph, path_l):
     total_weight = 0
     outside_weight = 0
@@ -77,7 +91,8 @@ def get_best_path(digraph, start, end, path, best_path, max_outside_dist):
         best_path: list of strings
             The shortest path found so far between the original start
             and end node.
-
+        max_outside_dist: int
+            The maximum outdoor distance allowed
     Returns:
         A tuple with the shortest-path from start to end, represented by
         a list of building numbers (in strings), [n_1, n_2, ..., n_k],
@@ -87,6 +102,9 @@ def get_best_path(digraph, start, end, path, best_path, max_outside_dist):
         If there exists no path that satisfies max_total_dist and
         max_dist_outdoors constraints, then return None.
     """
+    if isinstance(start, str) or isinstance(end, str):
+        start = digraph.get_node(start)
+        end = digraph.get_node(end)
     path = path + [start]
     if not digraph.has_node(start) and not digraph.has_node(end):
         raise ValueError("One or both nodes are not in digraph.")
@@ -100,11 +118,11 @@ def get_best_path(digraph, start, end, path, best_path, max_outside_dist):
         else:
             best_path_weight, best_out_path_weight = float('inf'), float('inf')
         if node not in path:  # avoid cycles
-            if path_weight < best_path_weight and out_path_weight < max_outside_dist:
+            if path_weight < best_path_weight and out_path_weight <= max_outside_dist:
                 new_path = get_best_path(digraph, node, end, path, best_path, max_outside_dist)
                 if new_path is not None:
                     new_path_weight, new_out_path_weight = get_path_weight(digraph, new_path)
-                    if new_path_weight < best_path_weight and new_out_path_weight < max_outside_dist:
+                    if new_path_weight < best_path_weight and new_out_path_weight <= max_outside_dist:
                         best_path = new_path
     return best_path
 
@@ -138,107 +156,99 @@ def directed_dfs(digraph, start, end, max_total_dist, max_dist_outdoors):
         If there exists no path that satisfies max_total_dist and
         max_dist_outdoors constraints, then raises a ValueError.
     """
-    pass
+    results = get_best_path(digraph, start, end, [], None, max_dist_outdoors)
+    if results is None:
+        raise ValueError("Cannot find result that satisfies max_dist_outdoors constraints")
+    if get_path_weight(digraph, results)[0] > max_total_dist:
+        raise ValueError("Cannot find result that satisfies max_total_dist constraints")
+    print(results)
+    results = node_list_to_string(digraph, results)
+    return results
 
 
 # ================================================================
 # Begin tests -- you do not need to modify anything below this line
 # ================================================================
 
-# class Ps2Test(unittest.TestCase):
-#     LARGE_DIST = 99999
-#
-#     def setUp(self):
-#         self.graph = load_map("mit_map.txt")
-#
-#     def test_load_map_basic(self):
-#         self.assertTrue(isinstance(self.graph, Digraph))
-#         self.assertEqual(len(self.graph.nodes), 37)
-#         all_edges = []
-#         for _, edges in self.graph.edges.items():
-#             all_edges += edges  # edges must be dict of node -> list of edges
-#         all_edges = set(all_edges)
-#         self.assertEqual(len(all_edges), 129)
-#
-#     def _print_path_description(self, start, end, total_dist, outdoor_dist):
-#         constraint = ""
-#         if outdoor_dist != Ps2Test.LARGE_DIST:
-#             constraint = "without walking more than {}m outdoors".format(
-#                 outdoor_dist)
-#         if total_dist != Ps2Test.LARGE_DIST:
-#             if constraint:
-#                 constraint += ' or {}m total'.format(total_dist)
-#             else:
-#                 constraint = "without walking more than {}m total".format(
-#                     total_dist)
-#
-#         print("------------------------")
-#         print("Shortest path from Building {} to {} {}".format(
-#             start, end, constraint))
-#
-#     def _test_path(self,
-#                    expectedPath,
-#                    total_dist=LARGE_DIST,
-#                    outdoor_dist=LARGE_DIST):
-#         start, end = expectedPath[0], expectedPath[-1]
-#         self._print_path_description(start, end, total_dist, outdoor_dist)
-#         dfsPath = directed_dfs(self.graph, start, end, total_dist, outdoor_dist)
-#         print("Expected: ", expectedPath)
-#         print("DFS: ", dfsPath)
-#         self.assertEqual(expectedPath, dfsPath)
-#
-#     def _test_impossible_path(self,
-#                               start,
-#                               end,
-#                               total_dist=LARGE_DIST,
-#                               outdoor_dist=LARGE_DIST):
-#         self._print_path_description(start, end, total_dist, outdoor_dist)
-#         with self.assertRaises(ValueError):
-#             directed_dfs(self.graph, start, end, total_dist, outdoor_dist)
-#
-#     def test_path_one_step(self):
-#         self._test_path(expectedPath=['32', '56'])
-#
-#     def test_path_no_outdoors(self):
-#         self._test_path(
-#             expectedPath=['32', '36', '26', '16', '56'], outdoor_dist=0)
-#
-#     def test_path_multi_step(self):
-#         self._test_path(expectedPath=['2', '3', '7', '9'])
-#
-#     def test_path_multi_step_no_outdoors(self):
-#         self._test_path(
-#             expectedPath=['2', '4', '10', '13', '9'], outdoor_dist=0)
-#
-#     def test_path_multi_step2(self):
-#         self._test_path(expectedPath=['1', '4', '12', '32'])
-#
-#     def test_path_multi_step_no_outdoors2(self):
-#         self._test_path(
-#             expectedPath=['1', '3', '10', '4', '12', '24', '34', '36', '32'],
-#             outdoor_dist=0)
-#
-#     def test_impossible_path1(self):
-#         self._test_impossible_path('8', '50', outdoor_dist=0)
-#
-#     def test_impossible_path2(self):
-#         self._test_impossible_path('10', '32', total_dist=100)
+class Ps2Test(unittest.TestCase):
+    LARGE_DIST = 99999
+
+    def setUp(self):
+        self.graph = load_map("mit_map.txt")
+
+    def test_load_map_basic(self):
+        self.assertTrue(isinstance(self.graph, Digraph))
+        self.assertEqual(len(self.graph.nodes), 37)
+        all_edges = []
+        for _, edges in self.graph.edges.items():
+            all_edges += edges  # edges must be dict of node -> list of edges
+        all_edges = set(all_edges)
+        self.assertEqual(len(all_edges), 129)
+
+    def _print_path_description(self, start, end, total_dist, outdoor_dist):
+        constraint = ""
+        if outdoor_dist != Ps2Test.LARGE_DIST:
+            constraint = "without walking more than {}m outdoors".format(
+                outdoor_dist)
+        if total_dist != Ps2Test.LARGE_DIST:
+            if constraint:
+                constraint += ' or {}m total'.format(total_dist)
+            else:
+                constraint = "without walking more than {}m total".format(
+                    total_dist)
+
+        print("------------------------")
+        print("Shortest path from Building {} to {} {}".format(
+            start, end, constraint))
+
+    def _test_path(self,
+                   expectedPath,
+                   total_dist=LARGE_DIST,
+                   outdoor_dist=LARGE_DIST):
+        start, end = expectedPath[0], expectedPath[-1]
+        self._print_path_description(start, end, total_dist, outdoor_dist)
+        dfsPath = directed_dfs(self.graph, start, end, total_dist, outdoor_dist)
+        print("Expected: ", expectedPath)
+        print("DFS: ", dfsPath)
+        self.assertEqual(expectedPath, dfsPath)
+
+    def _test_impossible_path(self,
+                              start,
+                              end,
+                              total_dist=LARGE_DIST,
+                              outdoor_dist=LARGE_DIST):
+        self._print_path_description(start, end, total_dist, outdoor_dist)
+        with self.assertRaises(ValueError):
+            directed_dfs(self.graph, start, end, total_dist, outdoor_dist)
+
+    def test_path_one_step(self):
+        self._test_path(expectedPath=['32', '56'])
+
+    def test_path_no_outdoors(self):
+        self._test_path(
+            expectedPath=['32', '36', '26', '16', '56'], outdoor_dist=0)
+
+    def test_path_multi_step(self):
+        self._test_path(expectedPath=['2', '3', '7', '9'])
+
+    def test_path_multi_step_no_outdoors(self):
+        self._test_path(
+            expectedPath=['2', '4', '10', '13', '9'], outdoor_dist=0)
+
+    def test_path_multi_step2(self):
+        self._test_path(expectedPath=['1', '4', '12', '32'])
+
+    def test_path_multi_step_no_outdoors2(self):
+        self._test_path(
+            expectedPath=['1', '3', '10', '4', '12', '24', '34', '36', '32'],
+            outdoor_dist=0)
+
+    def test_impossible_path1(self):
+        self._test_impossible_path('8', '50', outdoor_dist=0)
+
+    def test_impossible_path2(self):
+        self._test_impossible_path('10', '32', total_dist=100)
 
 
 if __name__ == "__main__":
-    # unittest.main()
-    g = Digraph()
-    na = Node('a')
-    nb = Node('b')
-    nc = Node('c')
-    g.add_node(na)
-    g.add_node(nb)
-    g.add_node(nc)
-    e1 = WeightedEdge(na, nb, 15, 8)
-    e2 = WeightedEdge(na, nc, 12, 12)
-    e3 = WeightedEdge(nb, nc, 3, 1)
-    g.add_edge(e1)
-    g.add_edge(e2)
-    g.add_edge(e3)
-    res = get_best_path(g, na, nc, [], None, 10)
-    print(res)
+    unittest.main()
