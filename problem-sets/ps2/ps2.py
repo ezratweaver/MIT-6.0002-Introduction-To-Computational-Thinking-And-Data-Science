@@ -59,8 +59,7 @@ def get_path_weight(digraph, path_l):
     return total_weight, outside_weight
 
 
-def get_best_path(digraph, start, end, path, max_dist_outdoors, best_dist,
-                  best_path):
+def get_best_path(digraph, start, end, path, best_path, max_outside_dist):
     """
     Finds the shortest path between buildings subject to constraints.
 
@@ -75,11 +74,6 @@ def get_best_path(digraph, start, end, path, max_dist_outdoors, best_dist,
             Represents the current path of nodes being traversed. Contains
             a list of node names, total distance traveled, and total
             distance outdoors.
-        max_dist_outdoors: int
-            Maximum distance spent outdoors on a path
-        best_dist: int
-            The smallest distance between the original start and end node
-            for the initial problem that you are trying to solve
         best_path: list of strings
             The shortest path found so far between the original start
             and end node.
@@ -100,17 +94,17 @@ def get_best_path(digraph, start, end, path, max_dist_outdoors, best_dist,
         return path
     for edge in digraph.get_edges_for_node(start):
         node = edge.get_destination()
-        path_weight = get_path_weight(digraph, path)[1]
+        path_weight, out_path_weight = get_path_weight(digraph, path)
         if best_path is not None:
-            best_path_weight = get_path_weight(digraph, best_path)[1]
+            best_path_weight, best_out_path_weight = get_path_weight(digraph, best_path)
         else:
-            best_path_weight = float('inf')
+            best_path_weight, best_out_path_weight = float('inf'), float('inf')
         if node not in path:  # avoid cycles
-            if path_weight < best_path_weight:
-                new_path = get_best_path(digraph, node, end, path, max_dist_outdoors, best_dist, best_path)
+            if path_weight < best_path_weight and out_path_weight < max_outside_dist:
+                new_path = get_best_path(digraph, node, end, path, best_path, max_outside_dist)
                 if new_path is not None:
-                    new_path_weight = get_path_weight(digraph, new_path)[1]
-                    if new_path_weight < best_path_weight:
+                    new_path_weight, new_out_path_weight = get_path_weight(digraph, new_path)
+                    if new_path_weight < best_path_weight and new_out_path_weight < max_outside_dist:
                         best_path = new_path
     return best_path
 
@@ -144,7 +138,6 @@ def directed_dfs(digraph, start, end, max_total_dist, max_dist_outdoors):
         If there exists no path that satisfies max_total_dist and
         max_dist_outdoors constraints, then raises a ValueError.
     """
-    # TODO
     pass
 
 
@@ -241,11 +234,11 @@ if __name__ == "__main__":
     g.add_node(na)
     g.add_node(nb)
     g.add_node(nc)
-    e1 = WeightedEdge(na, nb, 15, 10)
-    e2 = WeightedEdge(na, nc, 20, 14)
+    e1 = WeightedEdge(na, nb, 15, 8)
+    e2 = WeightedEdge(na, nc, 12, 12)
     e3 = WeightedEdge(nb, nc, 3, 1)
     g.add_edge(e1)
     g.add_edge(e2)
     g.add_edge(e3)
-    res = get_best_path(g, na, nc, [], 0, 0, None)
+    res = get_best_path(g, na, nc, [], None, 10)
     print(res)
