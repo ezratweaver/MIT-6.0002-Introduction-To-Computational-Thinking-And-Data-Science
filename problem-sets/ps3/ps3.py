@@ -81,8 +81,18 @@ class RectangularRoom(object):
         height: an integer > 0
         dirt_amount: an integer >= 0
         """
-        raise NotImplementedError
-    
+        self.width = width
+        self.height = height
+        self.dirt_amount = dirt_amount
+        self.tiles = {}
+        for x in range(width):
+            self.tiles[x] = []
+            for y in range(height):
+                self.tiles[x].append([x, y, dirt_amount])
+
+    def get_tile(self, x, y):
+        return self.tiles[x][y]
+
     def clean_tile_at_position(self, pos, capacity):
         """
         Mark the tile under the position pos as cleaned by capacity amount of dirt.
@@ -96,29 +106,40 @@ class RectangularRoom(object):
         Note: The amount of dirt on each tile should be NON-NEGATIVE.
               If the capacity exceeds the amount of dirt on the tile, mark it as 0.
         """
-        raise NotImplementedError
+        x = math.floor(pos.get_x())
+        y = math.floor(pos.get_y())
+        tile_tup = self.tiles[x][y]
+        if tile_tup[2] - capacity < 0:
+            tile_tup[2] = 0
+        else:
+            tile_tup[2] -= capacity
 
-    def is_tile_cleaned(self, m, n):
+    def is_tile_cleaned(self, x, y):
         """
-        Return True if the tile (m, n) has been cleaned.
+        Return True if the tile (x, y) has been cleaned.
 
-        Assumes that (m, n) represents a valid tile inside the room.
+        Assumes that (x, y) represents a valid tile inside the room.
 
-        m: an integer
-        n: an integer
+        x: an integer
+        y: an integer
         
-        Returns: True if the tile (m, n) is cleaned, False otherwise
+        Returns: True if the tile (x, y) is cleaned, False otherwise
 
         Note: The tile is considered clean only when the amount of dirt on this
               tile is 0.
         """
-        raise NotImplementedError
+        return self.get_tile(x, y)[2] == 0
 
     def get_num_cleaned_tiles(self):
         """
         Returns: an integer; the total number of clean tiles in the room
         """
-        raise NotImplementedError
+        count = 0
+        for x in range(self.width):
+            for y in range(self.height):
+                if self.is_tile_cleaned(x, y):
+                    count += 1
+        return count
         
     def is_position_in_room(self, pos):
         """
@@ -127,21 +148,25 @@ class RectangularRoom(object):
         pos: a Position object.
         Returns: True if pos is in the room, False otherwise.
         """
-        raise NotImplementedError
-        
-    def get_dirt_amount(self, m, n):
-        """
-        Return the amount of dirt on the tile (m, n)
-        
-        Assumes that (m, n) represents a valid tile inside the room.
+        if pos.get_x() > self.width or pos.get_x() < 0:
+            return False
+        if pos.get_y() > self.height or pos.get_y() < 0:
+            return False
+        return True
 
-        m: an integer
-        n: an integer
+    def get_dirt_amount(self, x, y):
+        """
+        Return the amount of dirt on the tile (x, y)
+        
+        Assumes that (x, y) represents a valid tile inside the room.
+
+        x: an integer
+        y: an integer
 
         Returns: an integer
         """
-        raise NotImplementedError
-        
+        return self.get_tile(x, y)[2]
+
     def get_num_tiles(self):
         """
         Returns: an integer; the total number of tiles in the room
@@ -230,6 +255,7 @@ class Robot(object):
         # do not change -- implement in subclasses
         raise NotImplementedError
 
+
 # === Problem 2
 class EmptyRoom(RectangularRoom):
     """
@@ -254,6 +280,7 @@ class EmptyRoom(RectangularRoom):
         Returns: a Position object; a valid random position (inside the room).
         """
         raise NotImplementedError
+
 
 class FurnishedRoom(RectangularRoom):
     """
@@ -485,3 +512,13 @@ def show_plot_room_shape(title, x_label, y_label):
 
 #show_plot_compare_strategies('Time to clean 80% of a 20x20 room, for various numbers of robots','Number of robots','Time / steps')
 #show_plot_room_shape('Time to clean 80% of a 300-tile room for various room shapes','Aspect Ratio', 'Time / steps')
+
+
+if __name__ == "__main__":
+    r = RectangularRoom(10, 10, 4)
+    p = Position(1, 1)
+    print(r.get_tile(1, 1))
+    print(r.is_tile_cleaned(1, 1))
+    r.clean_tile_at_position(p, 4)
+    print(r.is_tile_cleaned(1, 1))
+    print(r.get_num_cleaned_tiles())
