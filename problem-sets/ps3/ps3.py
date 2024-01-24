@@ -87,9 +87,9 @@ class RectangularRoom(object):
         self.height = height
         self.dirt_amount = dirt_amount
         self.tiles = {}
-        for x in range(width):
+        for x in range(width + 1):
             self.tiles[x] = []
-            for y in range(height):
+            for y in range(height + 1):
                 self.tiles[x].append([x, y, dirt_amount])
 
     def get_tile(self, x, y):
@@ -150,6 +150,7 @@ class RectangularRoom(object):
         pos: a Position object.
         Returns: True if pos is in the room, False otherwise.
         """
+
         if pos.get_x() > self.width or pos.get_x() < 0:
             return False
         if pos.get_y() > self.height or pos.get_y() < 0:
@@ -219,7 +220,7 @@ class Robot(object):
         self.room = room
         self.speed = speed
         self.capacity = capacity
-        self.position = None
+        self.position = room.get_random_position()
         self.direction = 0.0
 
     def get_robot_position(self):
@@ -285,8 +286,7 @@ class EmptyRoom(RectangularRoom):
         returns: True if pos is in the room and (in the case of FurnishedRoom)
                  if position is unfurnished, False otherwise.
         """
-        if not self.is_position_in_room(pos):
-            return False
+        return self.is_position_in_room(pos)
 
     def get_random_position(self):
         """
@@ -354,8 +354,8 @@ class FurnishedRoom(RectangularRoom):
 
         Returns True if pos is furnished and False otherwise
         """
-        x = pos.get_x()
-        y = pos.get_y()
+        x = math.floor(pos.get_x())
+        y = math.floor(pos.get_y())
         return self.is_tile_furnished(x, y)
 
     def is_position_valid(self, pos):
@@ -402,12 +402,18 @@ class StandardRobot(Robot):
         rotate once to a random new direction, and stay stationary) and clean the dirt on the tile
         by its given capacity. 
         """
-        raise NotImplementedError
+        new_position = self.position.get_new_position(self.direction, self.speed)
+        if self.room.is_position_valid(new_position) is False:
+            self.direction = round(random.uniform(0, 360), 2)
+            self.update_position_and_clean()
+            return
+        self.set_robot_position(new_position)
+        self.room.clean_tile_at_position(new_position, self.capacity)
 
 
 # Uncomment this line to see your implementation of StandardRobot in action!
 # test_robot_movement(StandardRobot, EmptyRoom)
-# test_robot_movement(StandardRobot, FurnishedRoom)
+test_robot_movement(StandardRobot, FurnishedRoom)
 
 # === Problem 4
 class FaultyRobot(Robot):
@@ -545,10 +551,5 @@ def show_plot_room_shape(title, x_label, y_label):
 
 
 if __name__ == "__main__":
-    r = RectangularRoom(10, 10, 4)
-    p = Position(1, 1)
-    print(r.get_tile(1, 1))
-    print(r.is_tile_cleaned(1, 1))
-    r.clean_tile_at_position(p, 4)
-    print(r.is_tile_cleaned(1, 1))
-    print(r.get_num_cleaned_tiles())
+    r = EmptyRoom(10, 10, 4)
+    print(r.tiles)
