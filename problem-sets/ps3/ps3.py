@@ -463,7 +463,6 @@ class FaultyRobot(Robot):
             return
         self.set_robot_position(new_position)
         if self.gets_faulty():
-            print("Robot faulty!")
             self.direction = round(random.uniform(0, 360), 2)
             self.update_position_and_clean()
             return
@@ -506,17 +505,18 @@ def run_simulation(num_robots, speed, capacity, width, height, dirt_amount, min_
             steps += 1
             for robot in robots:
                 robot.update_position_and_clean()
-            print(room.get_num_cleaned_tiles() / room.get_num_tiles())
-            if min_coverage >= room.get_num_cleaned_tiles() / room.get_num_tiles():
+            if room.get_num_cleaned_tiles() / room.get_num_tiles() >= min_coverage:
                 sims.append(steps)
                 break
-    return sims
+    return sum(sims) / len(sims)
 
-# print ('avg time steps: ' + str(run_simulation(1, 1.0, 1, 5, 5, 3, 1.0, 50, StandardRobot)))
-# print ('avg time steps: ' + str(run_simulation(1, 1.0, 1, 10, 10, 3, 0.8, 50, StandardRobot)))
-# print ('avg time steps: ' + str(run_simulation(1, 1.0, 1, 10, 10, 3, 0.9, 50, StandardRobot)))
-# print ('avg time steps: ' + str(run_simulation(1, 1.0, 1, 20, 20, 3, 0.5, 50, StandardRobot)))
-# print ('avg time steps: ' + str(run_simulation(3, 1.0, 1, 20, 20, 3, 0.5, 50, StandardRobot)))
+
+# print('avg time steps: ' + str(run_simulation(1, 1.0, 1, 5, 5, 3, 1.0, 50, StandardRobot)))
+# print('avg time steps: ' + str(run_simulation(1, 1.0, 1, 10, 10, 3, 0.8, 50, StandardRobot)))
+# print('avg time steps: ' + str(run_simulation(1, 1.0, 1, 10, 10, 3, 0.9, 50, StandardRobot)))
+# print('avg time steps: ' + str(run_simulation(1, 1.0, 1, 20, 20, 3, 0.5, 50, StandardRobot)))
+print('avg time steps: ' + str(run_simulation(2, 1.0, 1, 50, 6, 3, 0.8, 50, StandardRobot)))
+print('avg time steps: ' + str(run_simulation(2, 1.0, 1, 50, 6, 3, 0.8, 50, FaultyRobot)))
 
 # === Problem 6
 #
@@ -525,12 +525,14 @@ def run_simulation(num_robots, speed, capacity, width, height, dirt_amount, min_
 # 1)How does the performance of the two robot types compare when cleaning 80%
 #       of a 20x20 room?
 #
-#
+#   Maybe my code is off but on average the faulty robot befores slightly better
+
 # 2) How does the performance of the two robot types compare when two of each
 #       robot cleans 80% of rooms with dimensions 
 #       10x30, 20x15, 25x12, and 50x6?
 #
-#
+# I found that the faulty robot had a 7-10% increase in effenciency
+
 
 def show_plot_compare_strategies(title, x_label, y_label):
     """
@@ -580,4 +582,4 @@ def show_plot_room_shape(title, x_label, y_label):
 
 
 if __name__ == "__main__":
-    print(run_simulation(2, 3, 3, 10, 10, 5, 1, 10, StandardRobot))
+    pass
