@@ -294,7 +294,9 @@ class EmptyRoom(RectangularRoom):
         """
         x = random.randint(0, self.width)
         y = random.randint(0, self.height)
-        return Position(x, y)
+        if self.is_position_valid(Position(x, y)):
+            return Position(x, y)
+        return self.get_random_position()
 
 
 class FurnishedRoom(RectangularRoom):
@@ -379,7 +381,7 @@ class FurnishedRoom(RectangularRoom):
         """
         x = random.randint(0, self.width)
         y = random.randint(0, self.height)
-        if self.is_position_furnished(Position(x, y)):
+        if self.is_position_valid(Position(x, y)):
             self.get_random_position()
         return Position(x, y)
 
@@ -413,7 +415,8 @@ class StandardRobot(Robot):
 
 # Uncomment this line to see your implementation of StandardRobot in action!
 # test_robot_movement(StandardRobot, EmptyRoom)
-test_robot_movement(StandardRobot, FurnishedRoom)
+# test_robot_movement(StandardRobot, FurnishedRoom)
+
 
 # === Problem 4
 class FaultyRobot(Robot):
@@ -427,7 +430,7 @@ class FaultyRobot(Robot):
     @staticmethod
     def set_faulty_probability(prob):
         """
-        Sets the probability of getting faulty equal to PROB.
+        Sets the probability of getting faulty equal too PROB.
 
         prob: a float (0 <= prob <= 1)
         """
@@ -453,10 +456,22 @@ class FaultyRobot(Robot):
         StandardRobot at this time-step (checking if it can move to a new position,
         move there if it can, pick a new direction and stay stationary if it can't)
         """
-        raise NotImplementedError
+        new_position = self.position.get_new_position(self.direction, self.speed)
+        if self.room.is_position_valid(new_position) is False:
+            self.direction = round(random.uniform(0, 360), 2)
+            self.update_position_and_clean()
+            return
+        self.set_robot_position(new_position)
+        if self.gets_faulty():
+            print("Robot faulty!")
+            self.direction = round(random.uniform(0, 360), 2)
+            self.update_position_and_clean()
+            return
+        self.room.clean_tile_at_position(new_position, self.capacity)
 
 
-# test_robot_movement(FaultyRobot, EmptyRoom)
+# print(test_robot_movement(FaultyRobot, EmptyRoom))
+
 
 # === Problem 5
 def run_simulation(num_robots, speed, capacity, width, height, dirt_amount, min_coverage, num_trials,
@@ -480,8 +495,22 @@ def run_simulation(num_robots, speed, capacity, width, height, dirt_amount, min_
     robot_type: class of robot to be instantiated (e.g. StandardRobot or
                 FaultyRobot)
     """
-    raise NotImplementedError
-
+    sims = []
+    for _ in range(num_trials):
+        room = EmptyRoom(width, height, dirt_amount)
+        robots = []
+        for _ in range(num_robots):
+            robots.append(robot_type(room, speed, capacity))
+        steps = 0
+        while True:
+            steps += 1
+            for robot in robots:
+                robot.update_position_and_clean()
+            print(room.get_num_cleaned_tiles() / room.get_num_tiles())
+            if min_coverage >= room.get_num_cleaned_tiles() / room.get_num_tiles():
+                sims.append(steps)
+                break
+    return sims
 
 # print ('avg time steps: ' + str(run_simulation(1, 1.0, 1, 5, 5, 3, 1.0, 50, StandardRobot)))
 # print ('avg time steps: ' + str(run_simulation(1, 1.0, 1, 10, 10, 3, 0.8, 50, StandardRobot)))
@@ -551,5 +580,4 @@ def show_plot_room_shape(title, x_label, y_label):
 
 
 if __name__ == "__main__":
-    r = EmptyRoom(10, 10, 4)
-    print(r.tiles)
+    print(run_simulation(2, 3, 3, 10, 10, 5, 1, 10, StandardRobot))
