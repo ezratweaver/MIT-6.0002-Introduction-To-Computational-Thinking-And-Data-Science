@@ -7,21 +7,21 @@ def get_data(input_file):
     with open(input_file, 'r') as data_file:
         distances = []
         masses = []
-        data_file.readline() #ignore header
+        data_file.readline()  # ignore header
         for line in data_file:
             d, m = line.split(',')
             distances.append(float(d))
             masses.append(float(m))
-    return (masses, distances)
+    return masses, distances
 
 
 def plot_data(input_file):
     masses, distances = get_data(input_file)
-    distances = np.array(distances) 
+    distances = np.array(distances)
     masses = np.array(masses)
-    forces = masses*9.81
+    forces = masses * 9.81
     plt.plot(forces, distances, 'bo',
-               label = 'Measured displacements')
+             label='Measured displacements')
     plt.title('Measured Displacement of Spring')
     plt.xlabel('|Force| (Newtons)')
     plt.ylabel('Distance (meters)')
@@ -51,8 +51,7 @@ def fit_data(input_file):
     plt.plot(extended_forces_cubic, predicted_distances_cubic, 'k:', label='Cubic fit')
 
     plt.legend(loc='best')
-    plt.show() 
+    plt.show()
 
 
 fit_data("springData.csv")
-
