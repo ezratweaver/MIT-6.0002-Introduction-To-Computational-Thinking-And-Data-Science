@@ -261,12 +261,20 @@ def simulation_without_antibiotic(num_bacteria,
             patient.update()
             current_trial.append(patient.get_total_pop())
         populations_list.append(current_trial)
+
+    averages = []
+    time_step = []
+    for x in range(300):
+        time_step.append(x)
+        averages.append(calc_pop_avg(populations_list, x))
+
+    make_one_curve_plot(time_step, averages, "Time", "Average Population", "Simulation Without Antibiotic")
+
     return populations_list
 
 
 # When you are ready to run the simulation, uncomment the next line
 populations = simulation_without_antibiotic(100, 1000, 0.1, 0.025, 50)
-print(populations)
 
 
 ##########################
