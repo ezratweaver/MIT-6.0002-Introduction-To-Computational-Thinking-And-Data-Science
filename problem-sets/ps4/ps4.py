@@ -193,6 +193,8 @@ class Patient(object):
                 continue
         self.bacteria = surviving_bacteria + new_bacteria
 
+        return len(self.bacteria)
+
 
 ##########################
 # PROBLEM 2
@@ -257,9 +259,8 @@ def simulation_without_antibiotic(num_bacteria,
     for _ in range(num_trials):
         patient = Patient(bacteria_list, max_pop)
         current_trial = [patient.get_total_pop()]
-        for _ in range(2, 301):  # DEBUG
-            patient.update()
-            current_trial.append(patient.get_total_pop())
+        for _ in range(2, 301):
+            current_trial.append(patient.update())
         populations_list.append(current_trial)
 
     averages = []
@@ -274,7 +275,7 @@ def simulation_without_antibiotic(num_bacteria,
 
 
 # When you are ready to run the simulation, uncomment the next line
-populations = simulation_without_antibiotic(100, 1000, 0.1, 0.025, 50)
+# populations = simulation_without_antibiotic(100, 1000, 0.1, 0.025, 50)
 
 
 ##########################
@@ -560,7 +561,37 @@ def simulation_with_antibiotic(num_bacteria,
             resistant_pop[i][j] is the number of resistant bacteria for
             trial i at time step j
     """
-    pass  # TODO
+    populations = []
+    resistant_pop = []
+    bacteria_list = []
+    for _ in range(num_bacteria):
+        bacteria_list.append(ResistantBacteria(birth_prob, death_prob, mut_prob, resistant))
+
+    for _ in range(num_trials):
+        patient = TreatedPatient(bacteria_list, max_pop)
+        current_trial = [patient.get_total_pop()]
+        resistant_current_trial = [patient.get_resist_pop()]
+        for x in range(2, 401):
+            if x == 150:
+                patient.set_on_antibiotic()
+            current_trial.append(patient.update())
+            resistant_current_trial.append(patient.get_resist_pop())
+        populations.append(current_trial)
+        resistant_pop.append(resistant_current_trial)
+
+    averages = []
+    resistant_averages = []
+    time_step = []
+
+    for x in range(300):
+        time_step.append(x)
+        averages.append(calc_pop_avg(populations, x))
+        resistant_averages.append(calc_pop_avg(resistant_pop, x))
+
+    make_two_curve_plot(time_step, averages, resistant_averages,
+                        "Total", "Resistant", "Time", "Average Population", "With an Antibiotic")
+
+    return populations, resistant_pop
 
 
 # When you are ready to run the simulations, uncomment the next lines one
@@ -573,13 +604,16 @@ def simulation_with_antibiotic(num_bacteria,
 #                                                       mut_prob=0.8,
 #                                                       num_trials=50)
 
-# total_pop, resistant_pop = simulation_with_antibiotic(num_bacteria=100,
-#                                                       max_pop=1000,
-#                                                       birth_prob=0.17,
-#                                                       death_prob=0.2,
-#                                                       resistant=False,
-#                                                       mut_prob=0.8,
-#                                                       num_trials=50)
+
+total_pop, resistant_pop = simulation_with_antibiotic(num_bacteria=100,
+                                                      max_pop=1000,
+                                                      birth_prob=0.17,
+                                                      death_prob=0.2,
+                                                      resistant=False,
+                                                      mut_prob=0.8,
+                                                      num_trials=50)
+print(calc_95_ci(total_pop, 299))
+print(calc_95_ci(resistant_pop, 299))
 
 if __name__ == "__main__":
     s = SimpleBacteria(0.50, 0.50)
