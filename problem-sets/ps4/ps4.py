@@ -302,7 +302,18 @@ def calc_pop_std(populations, t):
         float: the standard deviation of populations across different trials at
              a specific time step
     """
-    pass  # TODO
+    timestep_list = []
+    for trial in populations:
+        timestep_list.append(trial[t])
+
+    mew = sum(timestep_list)/len(timestep_list)
+    sigma = 0
+    for step in timestep_list:
+        sigma += (step - mew)**2
+
+    variance = sigma/len(timestep_list)
+
+    return variance ** 0.5
 
 
 def calc_95_ci(populations, t):
