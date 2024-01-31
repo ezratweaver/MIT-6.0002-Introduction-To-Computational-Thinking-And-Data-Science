@@ -361,8 +361,7 @@ class ResistantBacteria(SimpleBacteria):
                 bacteria cell. This is the maximum probability of the
                 offspring acquiring antibiotic resistance
         """
-        self.birth_prob = birth_prob
-        self.death_prob = death_prob
+        super().__init__(birth_prob, death_prob)
         self.resistant = resistant
         self.mut_prob = mut_prob
 
@@ -419,7 +418,13 @@ class ResistantBacteria(SimpleBacteria):
             as this bacteria. Otherwise, raises a NoChildException if this
             bacteria cell does not reproduce.
         """
-        pass  # TODO
+        if random.random() <= self.birth_prob * (1 - pop_density):
+            resistant_var = self.resistant
+            if random.random() <= self.mut_prob * (1 - pop_density):
+                resistant_var = True
+            return ResistantBacteria(self.birth_prob, self.death_prob, self.mut_prob, resistant_var)
+        else:
+            raise NoChildException()
 
 
 class TreatedPatient(Patient):
