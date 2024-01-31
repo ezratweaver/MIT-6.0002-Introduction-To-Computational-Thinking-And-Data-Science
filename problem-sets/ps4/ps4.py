@@ -143,7 +143,7 @@ class Patient(object):
     def __init__(self, bacteria, max_pop):
         """
         Args:
-            bacteria (list of SimpleBacteria): The bacteria in the population
+            bacteria (list of bacteria objects): The bacteria in the population
             max_pop (int): Maximum possible bacteria population size for
                 this patient
         """
@@ -448,7 +448,7 @@ class TreatedPatient(Patient):
         Don't forget to call Patient's __init__ method at the start of this
         method.
         """
-        super.__init__(bacteria, max_pop)
+        super().__init__(bacteria, max_pop)
         self.on_antibiotic = False
 
     def set_on_antibiotic(self):
@@ -456,7 +456,7 @@ class TreatedPatient(Patient):
         Administer an antibiotic to this patient. The antibiotic acts on the
         bacteria population for all subsequent time steps.
         """
-        pass  # TODO
+        self.on_antibiotic = True
 
     def get_resist_pop(self):
         """
@@ -465,7 +465,11 @@ class TreatedPatient(Patient):
         Returns:
             int: the number of bacteria with antibiotic resistance
         """
-        pass  # TODO
+        total = 0
+        for bacteria in self.bacteria:
+            if bacteria.get_resistant():
+                total += 1
+        return total
 
     def update(self):
         """
