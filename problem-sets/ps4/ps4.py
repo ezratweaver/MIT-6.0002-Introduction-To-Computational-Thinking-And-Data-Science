@@ -139,6 +139,7 @@ class Patient(object):
     Representation of a simplified patient. The patient does not take any
     antibiotics and his/her bacteria populations have no antibiotic resistance.
     """
+
     def __init__(self, bacteria, max_pop):
         """
         Args:
@@ -182,7 +183,7 @@ class Patient(object):
         Returns:
             int: The total bacteria population at the end of the update
         """
-        surviving_bacteria = [bacteria for bacteria in self.bacteria if bacteria.death_prob() is True]
+        surviving_bacteria = [bacteria for bacteria in self.bacteria if bacteria.is_killed() is False]
         new_bacteria = []
         for bacteria in surviving_bacteria:
             density = len(surviving_bacteria + new_bacteria) / self.max_pop
@@ -191,6 +192,7 @@ class Patient(object):
             except NoChildException:
                 continue
         self.bacteria = surviving_bacteria + new_bacteria
+
 
 ##########################
 # PROBLEM 2
@@ -211,7 +213,7 @@ def calc_pop_avg(populations, n):
     total = 0
     for trial in populations:
         total += trial[n]
-    return total/len(populations)
+    return total / len(populations)
 
 
 def simulation_without_antibiotic(num_bacteria,
@@ -244,25 +246,28 @@ def simulation_without_antibiotic(num_bacteria,
         num_trials (int): number of simulation runs to execute
 
     Returns:
-        populations (list of lists or 2D array): populations[i][j] is the
+        populations_list (list of lists or 2D array): populations[i][j] is the
             number of bacteria in trial i at time step j
     """
-    trials = []
+    populations_list = []
     bacteria_list = []
-    for _ in num_bacteria:
+    for _ in range(num_bacteria):
         bacteria_list.append(SimpleBacteria(birth_prob, death_prob))
 
-    for _ in num_trials:
+    for _ in range(num_trials):
         patient = Patient(bacteria_list, max_pop)
-        current_trial = []
-        current_trial.append(patient.bacteria)
-        for _ in range(2, 302):
-            pass
-
+        current_trial = [patient.get_total_pop()]
+        for _ in range(2, 301):  # DEBUG
+            patient.update()
+            current_trial.append(patient.get_total_pop())
+        populations_list.append(current_trial)
+    return populations_list
 
 
 # When you are ready to run the simulation, uncomment the next line
-# populations = simulation_without_antibiotic(100, 1000, 0.1, 0.025, 50)
+populations = simulation_without_antibiotic(100, 1000, 0.1, 0.025, 50)
+print(populations)
+
 
 ##########################
 # PROBLEM 3
@@ -391,6 +396,7 @@ class TreatedPatient(Patient):
     antibiotic and his/her bacteria population can acquire antibiotic
     resistance. The patient cannot go off an antibiotic once on it.
     """
+
     def __init__(self, bacteria, max_pop):
         """
         Args:
@@ -522,4 +528,3 @@ def simulation_with_antibiotic(num_bacteria,
 
 if __name__ == "__main__":
     s = SimpleBacteria(0.50, 0.50)
-    print(s.is_killed())
