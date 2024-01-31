@@ -1,0 +1,33 @@
+With an Antibiotic 95% confidence interval values
+
+-- Simulation A --
+
+Total Population Average = 174.0
+Total Population Confidince Interval = 8.89
+
+Resistant Population Average = 174.0
+Resistant Population Confidince Interval = 8.89
+
+
+-- Simulation B --
+
+Total Population Average = 0.0
+Total Population Confidince Interval = 0.0
+
+Resistant Population Average = 0.0
+Resistant Population Confidince Interval = 0.0
+
+
+Trends of Simulation A and Simulation B
+    1. What happens to the total population before introducing the antibiotic?
+        A. It grows.
+        B. It grows at first, but starts waying off.
+    2. What happens to the resistant bacteria population before introducing the antibiotic?
+        A. It grows but stagnates.
+        B. It has a little bit of growth but has a downward trend.
+    3. What happens to the total population after introducing the antibiotic?
+        A. It disapears almost immediately
+        B. It also dies immediately.
+    4. What happens to the resistant bacteria population after introducing the antibiotic?
+        A. It disapears rapidly, but starts building back up.
+        B. It drops, and then slowly dies out.
