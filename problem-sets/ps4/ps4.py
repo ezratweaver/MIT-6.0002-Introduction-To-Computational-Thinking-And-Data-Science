@@ -100,7 +100,7 @@ class SimpleBacteria(object):
         Returns:
             bool: True with probability self.death_prob, False otherwise.
         """
-        return random.random() < self.death_prob
+        return random.random() <= self.death_prob
 
     def reproduce(self, pop_density):
         """
@@ -128,7 +128,7 @@ class SimpleBacteria(object):
         Raises:
             NoChildException if this bacteria cell does not reproduce.
         """
-        if random.random() < self.birth_prob * (1 - pop_density):
+        if random.random() <= self.birth_prob * (1 - pop_density):
             return SimpleBacteria(self.birth_prob, self.death_prob)
         else:
             raise NoChildException()
@@ -361,11 +361,14 @@ class ResistantBacteria(SimpleBacteria):
                 bacteria cell. This is the maximum probability of the
                 offspring acquiring antibiotic resistance
         """
-        pass  # TODO
+        self.birth_prob = birth_prob
+        self.death_prob = death_prob
+        self.resistant = resistant
+        self.mut_prob = mut_prob
 
     def get_resistant(self):
         """Returns whether the bacteria has antibiotic resistance"""
-        pass  # TODO
+        return self.resistant
 
     def is_killed(self):
         """Stochastically determines whether this bacteria cell is killed in
@@ -379,7 +382,13 @@ class ResistantBacteria(SimpleBacteria):
             bool: True if the bacteria dies with the appropriate probability
                 and False otherwise.
         """
-        pass  # TODO
+        if self.get_resistant():
+            if random.random() <= self.death_prob:
+                return True
+        elif self.get_resistant() is False:
+            if random.random() <= self.death_prob / 4:
+                return True
+        return False
 
     def reproduce(self, pop_density):
         """
