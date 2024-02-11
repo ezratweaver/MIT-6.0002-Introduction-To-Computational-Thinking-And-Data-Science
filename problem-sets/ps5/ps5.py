@@ -3,8 +3,9 @@
 # Name: 
 # Collaborators (discussion):
 # Time:
-
+import numpy as np
 import pylab
+import matplotlib.pyplot as plt
 import re
 
 # cities in our weather data
@@ -163,8 +164,13 @@ def generate_models(x, y, degs):
         a list of pylab arrays, where each array is a 1-d array of coefficients
         that minimizes the squared error of the fitting polynomial
     """
-    # TODO
-    pass
+    fits_list = []
+
+    for p in degs:
+        fit = pylab.array(np.polyfit(x, y, p))
+        fits_list.append(fit)
+
+    return fits_list
 
 
 def r_squared(y, estimated):
@@ -180,10 +186,13 @@ def r_squared(y, estimated):
     Returns:
         a float for the R-squared error term
     """
-    # TODO
-    pass
+    error = ((estimated - y)**2).sum()
+    mean_error = error/len(y)
+    return 1 - (mean_error/np.var(y))
 
-def evaluate_models_on_training(x, y, models):
+
+def evaluate_models_on_training(x, y, models,
+                        degrees=None, figname="Figure1"):
     """
     For each regression model, compute the R-squared value for this model with the
     standard error over slope of a linear regression line (only if the model is
@@ -209,8 +218,32 @@ def evaluate_models_on_training(x, y, models):
     Returns:
         None
     """
-    # TODO
-    pass
+    if degrees is None:
+        degrees = ["N\\A" for _ in range(len(models))]
+    line_styles = ['r-', '--', '-.', ':', 'steps', '-.', '--',
+                   '-|', '-', ':', '-.', '--', '-|', '-']
+
+    plt.plot(x, y, "bo", label="Tempatures of time") 
+    plt.title("Tempature changes, with linear regression")
+    plt.xlabel("Time")
+    plt.ylabel("Tempature (Celsius)")
+
+    for z, model in enumerate(models):
+        predicted_y = np.polyval(model, x)
+
+        label_add = ""
+        if degrees[z] == 1:
+            label_add = f"S\\E={round(se_over_slope(x, y, predicted_y, model), 3)}"
+
+        rsquare = round(r_squared(y, predicted_y), 3)
+        plt.plot(x, predicted_y, line_styles[z], 
+                label=f"Degree={degrees[z]}, R^2={rsquare} " + label_add)
+
+
+    plt.legend()
+    plt.savefig(f"plots/{figname}.png")
+    plt.show()
+
 
 def gen_cities_avg(climate, multi_cities, years):
     """
@@ -309,11 +342,30 @@ def evaluate_models_on_testing(x, y, models):
     pass
 
 if __name__ == '__main__':
+    climate_data = Climate("data.csv")
+    # PART a.0
 
-    pass 
+    # test_x = np.array([1, 2, 3, 4, 5])
+    # test_y = np.array([2, 1, 4, 3, 5])
+    # fitlist = [1, 2, 4]
+
+    # models = generate_models(test_x, test_y, fitlist) 
+    # evaluate_models_on_training(test_x, test_y, models, fitlist)
 
     # Part A.4
-    # TODO: replace this line with your code
+    
+    test_x = []
+    test_y = []
+    for x in range(1961, 2010):
+        test_x.append(x)
+        test_y.append(climate_data.get_daily_temp("NEW YORK", 1, 10, x))
+       
+    test_x = np.array(test_x)
+    test_y = np.array(test_y)
+
+    fitlist = [1]
+    models = generate_models(test_x, test_y, fitlist)
+    evaluate_models_on_training(test_x, test_y, models, fitlist, "Figure1")
 
     # Part B
     # TODO: replace this line with your code
