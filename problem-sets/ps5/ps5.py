@@ -391,15 +391,25 @@ def codeA4(climate):
                     fitlist, "Figure2", "Average Yearly Tempature (New York)")
 
 
+def codeB(climate):
+    test_x = [year for year in range(1961, 2010)]
+    test_y = gen_cities_avg(climate, CITIES, test_x)
+
+    test_x = np.array(test_x)
+    
+    fitlist = [1]
+    models = generate_models(test_x, test_y, fitlist)
+    evaluate_models_on_training(test_x, test_y, models, fitlist,
+                    "Figure3", "Average Yearly Tempature (21 Major US Cities)")
+
 
 if __name__ == '__main__':
     climate_data = Climate("data.csv")
 
-    codeA4(climate_data)
-    codeA1(climate_data)
+    # codeA4(climate_data)
+    # codeA1(climate_data)
 
-    # Part B
-    # TODO: replace this line with your code
+    codeB(climate_data)
 
     # Part C
     # TODO: replace this line with your code
