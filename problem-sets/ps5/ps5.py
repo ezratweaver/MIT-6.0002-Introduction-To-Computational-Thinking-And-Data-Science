@@ -319,7 +319,7 @@ def rmse(y, estimated):
     for i in range(len(y)):
         error += (y[i] - estimated[i])**2
     return (error/len(y))**0.5
- 
+
 
 def gen_std_devs(climate, multi_cities, years):
     """
@@ -377,9 +377,9 @@ def evaluate_models_on_testing(x, y, models,
 
     for z, model in enumerate(models):
         predicted_y = np.polyval(model, x)
-        rsme_val = round(rsme(y, predicted_y), 3)
+        rmse_val = round(rmse(y, predicted_y), 3)
         plt.plot(x, predicted_y, line_styles[z], 
-                label=f"Degree={degrees[z]}, rsme={rsme_val} ")
+                label=f"Degree={degrees[z]}, rsme={rmse_val} ")
 
 
     plt.legend()
@@ -494,9 +494,11 @@ if __name__ == '__main__':
     # codeA1(climate_data)
     # codeB(climate_data)
     # codeC(climate_data)
-    codeD1(climate_data)
 
-    codeD2(climate_data)
+    # codeD1(climate_data)
+
+    # codeD2(climate_data)
+    
 
     # Part D.2
     # TODO: replace this line with your code
