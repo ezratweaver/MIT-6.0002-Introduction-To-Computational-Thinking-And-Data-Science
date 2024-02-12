@@ -260,8 +260,15 @@ def gen_cities_avg(climate, multi_cities, years):
         this array corresponds to the average annual temperature over the given
         cities for a given year.
     """
-    # TODO
-    pass
+    yearly_averages = []
+    for year in years:
+        city_averages = []
+        for city in multi_cities:
+            temps = climate.get_yearly_temp(city, year) 
+            city_averages.append(temps.sum()/len(temps))
+        yearly_averages.append(sum(city_averages)/len(city_averages))
+    return np.array(yearly_averages)
+
 
 def moving_average(y, window_length):
     """
