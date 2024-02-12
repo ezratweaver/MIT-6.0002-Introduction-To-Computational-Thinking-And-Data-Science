@@ -299,7 +299,7 @@ def moving_average(y, window_length):
             val += y[i + x]
         avr.append(val/window_length)
 
-    return avr
+    return np.array(avr)
 
 
 def rmse(y, estimated):
@@ -418,6 +418,20 @@ def codeB(climate):
                     "Figure3", "Average Yearly Tempature (21 Major US Cities)")
 
 
+def codeC(climate):
+    test_x = [year for year in range(1961, 2010)]
+    test_y = gen_cities_avg(climate, CITIES, test_x)
+
+    test_x = np.array(test_x)
+
+    test_y = moving_average(test_y, 5)
+
+    fitlist = [1]
+    models = generate_models(test_x, test_y, fitlist)
+    evaluate_models_on_training(test_x, test_y, models, fitlist, "Figure4",
+                    "Moving Average of Yearly Tempature (21 Major US Cities)")
+
+
 if __name__ == '__main__':
     climate_data = Climate("data.csv")
 
@@ -425,7 +439,7 @@ if __name__ == '__main__':
     # codeA1(climate_data)
     # codeB(climate_data)
 
-    print(moving_average([10, 20, 30, 40, 50], 3))
+    codeC(climate_data)
 
     # Part D.2
     # TODO: replace this line with your code
