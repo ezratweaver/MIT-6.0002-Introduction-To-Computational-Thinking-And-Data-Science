@@ -341,24 +341,22 @@ def evaluate_models_on_testing(x, y, models):
     # TODO
     pass
 
-if __name__ == '__main__':
-    climate_data = Climate("data.csv")
-    # PART a.0
 
-    # test_x = np.array([1, 2, 3, 4, 5])
-    # test_y = np.array([2, 1, 4, 3, 5])
-    # fitlist = [1, 2, 4]
+def codeT():
+    test_x = np.array([1, 2, 3, 4, 5])
+    test_y = np.array([2, 1, 4, 3, 5])
+    fitlist = [1, 2, 4]
 
-    # models = generate_models(test_x, test_y, fitlist) 
-    # evaluate_models_on_training(test_x, test_y, models, fitlist)
+    models = generate_models(test_x, test_y, fitlist) 
+    evaluate_models_on_training(test_x, test_y, models, fitlist)
 
-    # Part A.4
-    
+
+def codeA1(climate):
     test_x = []
     test_y = []
     for x in range(1961, 2010):
         test_x.append(x)
-        test_y.append(climate_data.get_daily_temp("NEW YORK", 1, 10, x))
+        test_y.append(climate.get_daily_temp("NEW YORK", 1, 10, x))
        
     test_x = np.array(test_x)
     test_y = np.array(test_y)
@@ -366,6 +364,19 @@ if __name__ == '__main__':
     fitlist = [1]
     models = generate_models(test_x, test_y, fitlist)
     evaluate_models_on_training(test_x, test_y, models, fitlist, "Figure1")
+
+
+def codeA4(climate):
+    test_x = []
+    test_y = []
+    for year in range(1961, 2010):
+        print(climate.get_yearly_temp("NEW YORK", year))
+
+
+if __name__ == '__main__':
+    climate_data = Climate("data.csv")
+
+    codeA4(climate_data)
 
     # Part B
     # TODO: replace this line with your code
