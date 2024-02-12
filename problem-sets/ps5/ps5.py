@@ -7,6 +7,7 @@ import numpy as np
 import pylab
 import matplotlib.pyplot as plt
 import re
+import datetime
 
 # cities in our weather data
 CITIES = [
@@ -321,6 +322,14 @@ def rmse(y, estimated):
     return (error/len(y))**0.5
 
 
+def is_leap_year(year):
+    try:
+        datetime.datetime(year, 2, 29)
+        return True
+    except ValueError:
+        return False
+
+
 def gen_std_devs(climate, multi_cities, years):
     """
     For each year in years, compute the standard deviation over the averaged yearly
@@ -336,8 +345,31 @@ def gen_std_devs(climate, multi_cities, years):
         this array corresponds to the standard deviation of the average annual 
         city temperatures for the given cities in a given year.
     """
-    # TODO
-    pass
+    cities_dict = {}
+    for city in multi_cities:
+        cities_dict[city] = {}
+        for year in years:
+            cities_dict[city][year] = climate.get_yearly_temp(city, year)
+
+    std_list = [] 
+    for year in years:
+        daily_avr = []
+
+        if is_leap_year(year):
+            day_range = 366
+        else:
+            day_range = 365
+
+        for day in range(day_range):
+            day_list = []
+            for city in cities_dict.keys():
+                day_list.append(cities_dict[city][year][day])
+            daily_avr.append(sum(day_list)/len(day_list))
+        std_list.append(np.std(daily_avr))
+
+    print(std_list)
+
+    return np.array(std_list)
 
 
 def evaluate_models_on_testing(x, y, models, 
@@ -496,12 +528,9 @@ if __name__ == '__main__':
     # codeC(climate_data)
 
     # codeD1(climate_data)
-
     # codeD2(climate_data)
     
-
-    # Part D.2
-    # TODO: replace this line with your code
+    gen_std_devs(climate_data, CITIES, [year for year in TRAINING_INTERVAL])
 
     # Part E
     # TODO: replace this line with your code
