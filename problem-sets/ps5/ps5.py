@@ -192,7 +192,7 @@ def r_squared(y, estimated):
 
 
 def evaluate_models_on_training(x, y, models,
-                        degrees=None, figname="Figure1"):
+                        degrees=None, figname="Figure1", title="Title"):
     """
     For each regression model, compute the R-squared value for this model with the
     standard error over slope of a linear regression line (only if the model is
@@ -224,7 +224,7 @@ def evaluate_models_on_training(x, y, models,
                    '-|', '-', ':', '-.', '--', '-|', '-']
 
     plt.plot(x, y, "bo", label="Tempatures of time") 
-    plt.title("Tempature changes, with linear regression")
+    plt.title(title)
     plt.xlabel("Time")
     plt.ylabel("Tempature (Celsius)")
 
@@ -363,20 +363,33 @@ def codeA1(climate):
 
     fitlist = [1]
     models = generate_models(test_x, test_y, fitlist)
-    evaluate_models_on_training(test_x, test_y, models, fitlist, "Figure1")
+    evaluate_models_on_training(test_x, test_y, models,
+                fitlist, "Figure1", "Tempatures on January 10th (New York)")
 
 
 def codeA4(climate):
     test_x = []
     test_y = []
     for year in range(1961, 2010):
-        print(climate.get_yearly_temp("NEW YORK", year))
+        test_x.append(year)
+        temps = climate.get_yearly_temp("NEW YORK", year)
+        test_y.append(temps.sum()/len(temps))
+    
+    test_x = np.array(test_x)
+    test_y = np.array(test_y)
+
+    fitlist = [1]
+    models = generate_models(test_x, test_y, fitlist)
+    evaluate_models_on_training(test_x, test_y, models,
+                    fitlist, "Figure2", "Average Yearly Tempature (New York)")
+
 
 
 if __name__ == '__main__':
     climate_data = Climate("data.csv")
 
     codeA4(climate_data)
+    codeA1(climate_data)
 
     # Part B
     # TODO: replace this line with your code
