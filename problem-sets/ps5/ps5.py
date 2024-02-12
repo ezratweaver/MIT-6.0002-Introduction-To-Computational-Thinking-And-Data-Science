@@ -519,6 +519,20 @@ def codeD2(climate):
         "Predicted Moving Average of Yearly Tempature (21 Major US Cities)")
 
 
+def codeE(climate):
+    test_x = np.array([year for year in TRAINING_INTERVAL])
+    test_y = gen_std_devs(climate, CITIES, test_x)
+
+    test_y = moving_average(test_y, 5)
+
+    fitlist = [1]
+    models = generate_models(test_x, test_y, fitlist)
+
+    evaluate_models_on_training(test_x, test_y, models, fitlist, "Figure7",
+                "Moving Average of Standard Deviation of Daily Tempatures")
+
+
+
 if __name__ == '__main__':
     climate_data = Climate("data.csv")
 
@@ -529,8 +543,6 @@ if __name__ == '__main__':
 
     # codeD1(climate_data)
     # codeD2(climate_data)
-    
-    gen_std_devs(climate_data, CITIES, [year for year in TRAINING_INTERVAL])
 
-    # Part E
-    # TODO: replace this line with your code
+    codeE(climate_data)
+
