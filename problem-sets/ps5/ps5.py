@@ -284,8 +284,23 @@ def moving_average(y, window_length):
         an 1-d pylab array with the same length as y storing moving average of
         y-coordinates of the N sample points
     """
-    # TODO
-    pass
+    avr = []
+    for x in range(1, window_length):
+        val = 0
+        for z in range(x):
+            val += y[z]
+        avr.append(val/x)
+
+    for i in range(len(y)):
+        if i + window_length > len(y):
+            break
+        val = 0
+        for x in range(window_length):
+            val += y[i + x]
+        avr.append(val/window_length)
+
+    return avr
+
 
 def rmse(y, estimated):
     """
@@ -408,11 +423,9 @@ if __name__ == '__main__':
 
     # codeA4(climate_data)
     # codeA1(climate_data)
+    # codeB(climate_data)
 
-    codeB(climate_data)
-
-    # Part C
-    # TODO: replace this line with your code
+    print(moving_average([10, 20, 30, 40, 50], 3))
 
     # Part D.2
     # TODO: replace this line with your code
