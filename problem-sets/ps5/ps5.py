@@ -339,7 +339,8 @@ def gen_std_devs(climate, multi_cities, years):
     # TODO
     pass
 
-def evaluate_models_on_testing(x, y, models):
+def evaluate_models_on_testing(x, y, models, 
+                    degrees=None, figname="FigureX", title="Title"):
     """
     For each regression model, compute the RMSE for this model and plot the
     test data along with the model’s estimation.
@@ -363,8 +364,26 @@ def evaluate_models_on_testing(x, y, models):
     Returns:
         None
     """
-    # TODO
-    pass
+    if degrees is None:
+        degrees = ["N\\A" for _ in range(len(models))]
+    line_styles = ['r-', '--', '-.', ':', 'steps', '-.', '--',
+                   '-|', '-', ':', '-.', '--', '-|', '-']
+
+    plt.plot(x, y, "bo", label="Tempatures of time") 
+    plt.title(title)
+    plt.xlabel("Time")
+    plt.ylabel("Tempature (Celsius)")
+
+    for z, model in enumerate(models):
+        predicted_y = np.polyval(model, x)
+        rsme = round(rsme(y, predicted_y), 3)
+        plt.plot(x, predicted_y, line_styles[z], 
+                label=f"Degree={degrees[z]}, rsme={rsme} ")
+
+
+    plt.legend()
+    plt.savefig(f"plots/{figname}.png")
+    plt.show()
 
 
 def codeT():
@@ -449,6 +468,24 @@ def codeD1(climate):
                     "Moving Average of Yearly Tempature (21 Major US Cities)")
 
 
+def codeD2(climate):
+    test_x = np.array([year for year in range(1961, 2010)])
+    test_y = gen_cities_avg(climate, CITIES, test_x)
+
+    test_y = moving_average(test_y, 5)
+
+    fitlist = [1, 2, 20]
+    models = generate_models(test_x, test_y, fitlist)
+
+    test_x = np.array([year for year in range(2010, 2016)])
+    test_y = gen_cities_avg(climate, CITIES, test_x)
+
+    test_y = moving_average(test_y, 5)
+    
+    evaluate_models_on_training(test_x, test_y, models, fitlist, "Figure6",
+        "Predicted Moving Average of Yearly Tempature (21 Major US Cities)")
+
+
 if __name__ == '__main__':
     climate_data = Climate("data.csv")
 
@@ -456,8 +493,9 @@ if __name__ == '__main__':
     # codeA1(climate_data)
     # codeB(climate_data)
     # codeC(climate_data)
+    # codeD1(climate_data)
 
-    codeD1(climate_data)
+    codeD2(climate_data)
 
     # Part D.2
     # TODO: replace this line with your code
