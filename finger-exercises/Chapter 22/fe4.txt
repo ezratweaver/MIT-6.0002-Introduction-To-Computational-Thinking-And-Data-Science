@@ -1,0 +1,8 @@
+Finger exercise: On May 19, 2020, the New York Times reported a
+123% increase in U.S. air travel in a single month (from 95,161
+passengers to 212,508 passengers). It also reported that this increase
+followed a recent 96% drop in air travel. What was the total net
+percentage change? (Page 532)
+
+
+Answer: 27% Net Change.
