@@ -1,0 +1,8 @@
+Finger exercise: Over the last 100 years, the number of deaths per
+year in Canada was positively correlated with the amount of meat
+consumed per year in Canada. What lurking variable might explain
+this? (Page 521)
+
+
+Answer: A rising population, would mean more meat is consumed, but a
+        rising population would also mean more deaths.
