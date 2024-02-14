@@ -1,0 +1,11 @@
+Finger exercise: The infection-fatality rate for a disease is the
+number of people who contract the disease divided by the number of
+those people who die from the disease. The case-fatality rate for a
+disease is the number of people who are diagnosed with the disease
+divided by the number of those people who die from the disease.
+Which of these is easier to estimate accurately, and why? (Page 524)
+
+
+Answer: Deaths would be much easier to estimate, because people who have
+        a chronic disease typically end up in the hospital, over people
+        who are not chronicly ill, would not end up in a hospital.
